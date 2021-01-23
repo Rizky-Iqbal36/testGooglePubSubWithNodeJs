@@ -1,5 +1,5 @@
 ### testGooglePubSubWithNodeJs
 
-playing with google pubsub with nodejs and sequelize
+playing with google pubsub using nodejs and sequelize
 
 latihan doang, [...] depan gang
