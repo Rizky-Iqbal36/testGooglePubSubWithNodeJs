@@ -1,0 +1,25 @@
+{
+  "name": "birthday",
+  "version": "1.0.0",
+  "description": "pubsub one-to-many-relationship",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon server.js",
+    "start:age": "nodemon src/pubsub/subscribers/ageSub.js",
+    "start:year": "nodemon src/pubsub/subscribers/yearSub.js"
+  },
+  "author": "Rizky Iqbal",
+  "license": "ISC",
+  "dependencies": {
+    "@google-cloud/pubsub": "^2.8.0",
+    "dotenv": "^8.2.0",
+    "express": "^4.17.1",
+    "mysql2": "^2.2.5",
+    "nodemon": "^2.0.7",
+    "sequelize": "^6.4.0"
+  },
+  "devDependencies": {
+    "sequelize-cli": "^6.2.0"
+  }
+}
