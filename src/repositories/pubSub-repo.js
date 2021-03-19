@@ -1,3 +1,4 @@
+const { post } = require("../services/birthDayService");
 exports.publishMessage = async (pubSubClient, topicName, payload) => {
   const dataBuffer = Buffer.from(JSON.stringify(payload));
 
@@ -5,9 +6,14 @@ exports.publishMessage = async (pubSubClient, topicName, payload) => {
   const isTopic = getTopics.filter((item) => item === topicName);
 
   if (isTopic.length !== 0) {
-    const messageId = await pubSubClient.topic(topicName).publish(dataBuffer);
-    console.log(`Message ${messageId} published.`);
-    return messageId;
+    try {
+      const messageId = await pubSubClient.topic(topicName).publish(dataBuffer);
+      console.log(`Message ${messageId} published.`);
+      return messageId;
+    } catch (err) {
+      console.error(`Received error while publishing: ${error.message}`);
+      return undefined;
+    }
   } else {
     console.log(`there is no topic with name: ${topicName}`);
     return undefined;
@@ -39,8 +45,9 @@ exports.listenForPullMessages = async (
     subscriptionName
   );
   console.log(`listening for message on ${subscriptionPath}`);
-  const messageHandler = (message) => {
+  const messageHandler = async (message) => {
     const parsedMessage = JSON.parse(message.data);
+    parsedMessage.subscription = subscriptionName;
     console.log(`Received message ${message.id}:`);
     const date = new Date();
     const getThisYear = date.getFullYear();
@@ -49,14 +56,15 @@ exports.listenForPullMessages = async (
         parsedMessage.service === "YEAR_SERVICE"
           ? parsedMessage.data
           : getThisYear - parsedMessage.data;
-      console.log(`birth: ${birth}`);
+      parsedMessage.year = birth;
     } else {
       age =
         parsedMessage.service === "AGE_SERVICE"
           ? parsedMessage.data
           : getThisYear - parsedMessage.data;
-      console.log(`age: ${age}`);
+      parsedMessage.age = age;
     }
+    await post(parsedMessage);
     message.ack();
   };
 
